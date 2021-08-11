@@ -1,21 +1,27 @@
+// require('../../db/conn');
+// const User = require('../../schema/userschema')
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
+const leave  = document.getElementById('leave-btn');
 const socket = io();
 
+// const Msg = require('../../schema/msgschema');
 const {username ,room} =  Qs.parse(location.search,{
   ignoreQueryPrefix: true 
 });
 
 socket.emit('joinRoom',{username,room});
 
-socket.on('roomUsers', ({ room, users }) => {
-  outputRoomName(room);
-  outputUsers(users);
+socket.on('roomUsers',(room) => {
+  // console.log("users = "+ruser);
+  outputRoomName(room.room);
+  outputUsers(room.ruser);
 });
 
 socket.on('message',message=>{
+  // console.log("msg = "+message);
   outputMessage(message);
   scrollToBottom();
 
@@ -41,9 +47,9 @@ chatForm.addEventListener('submit', (e) => {
 function outputMessage(message) {
   const div = document.createElement('div');
   div.classList.add('message');
-  div.innerHTML = `<p class="meta"> ${message.username} <span> ${message.time} </span></p>
+  div.innerHTML = `<p class="meta"> ${message.name} <span> ${message.time} </span></p>
   <p class="text">
-    ${message.text}
+    ${message.msg}
   </p>`;
   document.querySelector('.chat-messages').appendChild(div);
   
@@ -57,17 +63,19 @@ function outputRoomName(room) {
 }
 
 // Add users to DOM
-function outputUsers(users) {
+async function outputUsers(users) {
+  // const data = await User.find({room});
+// console.log("data= "+users)
   userList.innerHTML = '';
-  users.forEach((user) => {
+  users.forEach((users) => {
     const li = document.createElement('li');
-    li.innerText = user.username;
+    li.innerText = users.name;
     userList.appendChild(li);
   });
 }
 
 //Prompt the user before leave chat room
-document.getElementById('leave-btn').addEventListener('click', () => {
+leave.addEventListener('click', () => {
   const leaveRoom = confirm('Are you sure you want to leave the chatroom?');
   if (leaveRoom) {
     window.location = '../index.html';
