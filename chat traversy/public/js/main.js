@@ -27,11 +27,26 @@ socket.on('message',message=>{
 
 })
 
+socket.on('allmsg', message =>{
+
+  // console.log('all msg');
+//   message.map((ele)=>{
+//  console.log("ele = "+ele.name);
+
+
+// })
+  console.log("msg = "+message);
+  allMessage(message);
+  scrollToBottom();
+
+})
+
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
   // Get message text
   let msg = e.target.elements.msg.value;
   msg = msg.trim();
+  
   if (!msg) {
     return false;
   }
@@ -53,6 +68,18 @@ function outputMessage(message) {
   </p>`;
   document.querySelector('.chat-messages').appendChild(div);
   
+}
+function allMessage(message) {
+  message.map((ele)=>{
+    const div = document.createElement('div');
+    div.classList.add('message');
+    div.innerHTML = `<p class="meta"> ${ele.name} <span> ${ele.time} </span></p>
+    <p class="text">
+      ${ele.msg}
+    </p>`;
+    document.querySelector('.chat-messages').appendChild(div);
+    scrollToBottom();
+  })
 }
 function scrollToBottom (){
   chatMessages.scrollTop = chatMessages.scrollHeight; 

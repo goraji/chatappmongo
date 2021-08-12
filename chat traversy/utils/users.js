@@ -20,6 +20,7 @@ async function userJoin(id, username, room) {
 async function getCurrentUser(id) {
   const sid = id;
   const data = await User.findOne({sid});
+  console.log('datain grt = '+ data);
   return data;
 
   // return users.find((user) => user.id == id);
